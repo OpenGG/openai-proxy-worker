@@ -5,7 +5,7 @@ export const useEnvValue = (env: Env, key: keyof Env, defaults: string) => env[k
 
 export const useEnvValues = (env: Env, key: keyof Env) => {
   const values = getLazy(env, key, (env) => {
-    const secret = env[key];
+    const secret = env[key] || '';
 
     return secret.split(",").map((s) => s.trim()).filter((s) => s);
   });
