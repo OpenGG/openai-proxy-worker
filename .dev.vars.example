@@ -1,3 +1,6 @@
+# allowed models
+ENV_OPENAI_ALLOWED_MODELS=gpt-3.5-turbo, gpt-3.5-turbo-0301, text-curie-001, text-babbage-001, text-ada-001
+
 # incoming auth key
 SECRET_AUTH_KEYS=test_auth_key
 
