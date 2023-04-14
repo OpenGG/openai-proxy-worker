@@ -43,3 +43,18 @@ wrangler secret put SECRET_OPENAI_API_KEY
 ```bash
 pnpm run deploy
 ```
+
+6. Request with an auth key
+
+```bash
+curl --verbose --request POST 'https://your-worker.workers.dev/v1/chat/completions' \
+--header 'Authorization: KEY your_auth_key' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+ "model": "gpt-3.5-turbo",
+ "messages": [{
+    "role": "user",
+    "content": "Tell me who you are"
+ }]
+}'
+```

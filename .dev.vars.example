@@ -2,7 +2,7 @@
 ENV_OPENAI_ALLOWED_MODELS=gpt-3.5-turbo, gpt-3.5-turbo-0301, text-curie-001, text-babbage-001, text-ada-001
 
 # incoming auth key
-SECRET_AUTH_KEYS=test_auth_key
+SECRET_AUTH_KEYS=your_auth_key
 
 # openai api key, starts with "sk-"
-SECRET_OPENAI_API_KEY=
+SECRET_OPENAI_API_KEY=Your OpenAI key
