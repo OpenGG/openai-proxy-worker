@@ -55,32 +55,36 @@ export const readRequest = async (
       new Uint8Array(buff, 0, BUFFER_SIZE),
     );
 
-    if (done) {
-      return [true, result];
-    }
+    const unexpected = !done && !value;
 
-    if (!value) {
+    if (unexpected) {
       return [false, "Request read error unknown"];
     }
 
-    const {
-      byteLength,
-    } = value;
+    if (value) {
+      const {
+        byteLength,
+      } = value;
 
-    bytesReceived += byteLength;
+      bytesReceived += byteLength;
 
-    buff = value.buffer;
+      buff = value.buffer;
 
-    if (bytesReceived > limit) {
-      return [false, "Request body size exceeded"];
+      if (bytesReceived > limit) {
+        return [false, "Request body size exceeded"];
+      }
+
+      const [decodeSuccess, chunk] = decodeBuffer(decoder, value);
+
+      if (!decodeSuccess) {
+        return [false, "Invalid UTF8 input"];
+      }
+
+      result += chunk;
     }
 
-    const [decodeSuccess, chunk] = decodeBuffer(decoder, value);
-
-    if (!decodeSuccess) {
-      return [false, "Invalid UTF8 input"];
+    if (done) {
+      return [true, result];
     }
-
-    result += chunk;
   }
 };
