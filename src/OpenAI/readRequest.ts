@@ -55,6 +55,14 @@ export const readRequest = async (
       new Uint8Array(buff, 0, BUFFER_SIZE),
     );
 
+    if (done) {
+      return [true, result];
+    }
+
+    if (!value) {
+      return [false, "Request read error unknown"];
+    }
+
     const {
       byteLength,
     } = value;
@@ -74,9 +82,5 @@ export const readRequest = async (
     }
 
     result += chunk;
-
-    if (done) {
-      return [true, result];
-    }
   }
 };

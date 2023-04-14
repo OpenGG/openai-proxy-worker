@@ -40,7 +40,6 @@ export const proxyRoute: IMiddleware = async (request, env) => {
     return ErrorResponse(modelMsg, CLIENT_FORBIDDEN);
   }
 
-  return ErrorResponse("201", 201);
   // checking ends
 
   // prepare request
