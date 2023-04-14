@@ -1,16 +1,22 @@
-import type { IMiddleware } from "../types";
+import type { Env, IMiddleware } from "../types";
 import { Router } from "itty-router";
-import { BindEnv } from "../utils/BindEnv";
-import { withOpenAI } from "./withOpenAI";
+import { getLazy } from "../utils/getLazy";
+import { OPENAI_ROUTES, RESOURCE_NOT_FOUND } from "../constants";
+import { proxyRoute } from "../OpenAI/proxyRoute";
+import { ErrorResponse } from "../utils/ErrorResponse";
 
-const route404: IMiddleware = () => new Response(null, { status: 404 });
+const route404: IMiddleware = () =>
+  ErrorResponse("Not found", RESOURCE_NOT_FOUND);
 
-export const useRouter = BindEnv("router", (env) => {
-  const router = Router();
+export const useRouter = (env: Env) =>
+  getLazy(env, "router", (env) => {
+    const router = Router();
 
-  withOpenAI(router, env);
+    OPENAI_ROUTES.forEach((route) => {
+      router.all(route, proxyRoute);
+    });
 
-  router.all("*", route404);
+    router.all("*", route404);
 
-  return router;
-});
+    return router;
+  });
