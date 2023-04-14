@@ -36,6 +36,9 @@ wrangler secret put SECRET_AUTH_KEYS
 
 # Api key for invoking OpenAI API
 wrangler secret put SECRET_OPENAI_API_KEY
+
+# Setting allow list of models
+wrangler env put ENV_OPENAI_ALLOWED_MODELS
 ```
 
 5. Deploy worker.
