@@ -16,6 +16,6 @@ export type IMiddleware = (
   ...args: IMiddlewareArgs
 ) => Response | Promise<Response>;
 
-export interface IMiddlewareCreator<T extends any[]> {
+export interface IMiddlewareCreator<T extends unknown[]> {
   (...args: T): IMiddleware;
 }

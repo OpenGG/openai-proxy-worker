@@ -11,7 +11,9 @@ export const modelFilter = (
   env: Env,
   data: {},
 ): [boolean, string] => {
-  const model = (data as unknown as any)?.model || "";
+  const model = (data as unknown as {
+    model: string
+  })?.model || "";
 
   if (!isModelAllowed(env, model)) {
     return [false, "Model not allowed"];

@@ -3,7 +3,7 @@ import { Env } from "../types";
 const symbolRegistry = Symbol("registry");
 
 export const getLazy = <T>(env: Env, key: string, init: (env: Env) => T) => {
-  let registry: Map<string, any> = env[symbolRegistry];
+  let registry: Map<string, unknown> = env[symbolRegistry];
 
   if (!registry) {
     registry = env[symbolRegistry] = new Map();
