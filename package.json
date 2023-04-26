@@ -8,7 +8,7 @@
     "check": "rome check src && tsc",
     "test": "vitest",
     "coverage": "echo 'Error: coverage currently broken' && echo '' && exit 1 && vitest run --coverage",
-    "deploy": "pnpm run check && pnpm run test && wrangler publish src/index.ts",
+    "deploy": "pnpm run check && pnpm run test --run && wrangler publish src/index.ts",
     "dev": "wrangler dev src/index.ts --local"
   },
   "keywords": [],
