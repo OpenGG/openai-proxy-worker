@@ -1,12 +1,16 @@
-import { Env } from "../types";
+import { Env } from "../types.ts";
 
-const symbolRegistry = Symbol("registry");
+const symbolRegistry = Symbol("registry") as unknown as keyof Env;
 
 export const getLazy = <T>(env: Env, key: string, init: (env: Env) => T) => {
-  let registry: Map<string, unknown> = env[symbolRegistry];
+  let registry: Map<string, unknown> = env[symbolRegistry] as unknown as Map<
+    string,
+    unknown
+  >;
 
   if (!registry) {
-    registry = env[symbolRegistry] = new Map();
+    registry = new Map();
+    (env[symbolRegistry] as unknown) = registry;
   }
 
   if (registry.has(key)) {
@@ -18,4 +22,4 @@ export const getLazy = <T>(env: Env, key: string, init: (env: Env) => T) => {
   registry.set(key, val);
 
   return val;
-}
+};

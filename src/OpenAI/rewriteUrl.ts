@@ -9,7 +9,7 @@ export const rewriteUrl = (request: Request, base: string) => {
   );
 
   upstreamUrl.pathname = newPathname;
-  upstreamUrl.search = request.url;
+  upstreamUrl.search = url.search;
 
   return upstreamUrl;
 };

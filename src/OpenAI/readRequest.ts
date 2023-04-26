@@ -1,4 +1,4 @@
-import { getHeader } from "../utils/getHeader";
+import { getHeader } from "../utils/getHeader.ts";
 
 const BUFFER_SIZE = 4 * 1024; // 4k
 
@@ -22,6 +22,10 @@ export const readRequest = async (
   request: Request,
   limit = Infinity,
 ): Promise<[boolean, string]> => {
+  if (!request.body) {
+    return [false, "No payload provided."];
+  }
+
   const contentLength = parseInt(
     getHeader(request, "content-length") || "0",
     10,
@@ -58,7 +62,9 @@ export const readRequest = async (
     const unexpected = !done && !value;
 
     if (unexpected) {
-      return [false, "Request read error unknown"];
+      const msg = "Request read error unknown";
+      reader.cancel(msg);
+      return [false, msg];
     }
 
     if (value) {
@@ -71,13 +77,17 @@ export const readRequest = async (
       buff = value.buffer;
 
       if (bytesReceived > limit) {
-        return [false, "Request body size exceeded"];
+        const msg = "Request body size exceeded";
+        reader.cancel(msg);
+        return [false, msg];
       }
 
       const [decodeSuccess, chunk] = decodeBuffer(decoder, value);
 
       if (!decodeSuccess) {
-        return [false, "Invalid UTF8 input"];
+        const msg = "Invalid UTF8 input";
+        reader.cancel(msg);
+        return [false, msg];
       }
 
       result += chunk;

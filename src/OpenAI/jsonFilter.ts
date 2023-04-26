@@ -1,4 +1,4 @@
-import { readRequest } from "./readRequest";
+import { readRequest } from "./readRequest.ts";
 
 type IResult<T> = [true, string, T] | [false, string];
 

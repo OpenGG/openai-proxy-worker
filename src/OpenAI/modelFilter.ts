@@ -1,5 +1,5 @@
-import { Env } from "../types";
-import { useEnvValues } from "../utils/Env";
+import { Env } from "../types.ts";
+import { useEnvValues } from "../utils/Env.ts";
 
 const isModelAllowed = (env: Env, model: string) => {
   const allowed = useEnvValues(env, "ENV_OPENAI_ALLOWED_MODELS");

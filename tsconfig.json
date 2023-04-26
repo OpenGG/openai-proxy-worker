@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "baseUrl": "./src",
     "target": "esnext",
     "module": "esnext",
     "moduleResolution": "nodenext",
@@ -8,6 +12,10 @@
     ],
     "types": [
       "@cloudflare/workers-types"
-    ]
-  }
+    ],
+    "allowImportingTsExtensions": true,
+  },
+  "exclude": [
+    "node_modules"
+  ]
 }

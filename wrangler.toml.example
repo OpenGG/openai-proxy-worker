@@ -1,3 +1,10 @@
 name = "openai-proxy-worker"
 main = "src/index.ts"
 compatibility_date = "2022-06-30"
+
+[vars]
+# allow models
+ENV_OPENAI_ALLOWED_MODELS=gpt-3.5-turbo, gpt-3.5-turbo-0301, text-curie-001, text-babbage-001, text-ada-001
+
+[env.staging]
+name = 'openai-proxy-worker-staing'

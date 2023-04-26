@@ -2,24 +2,20 @@ import {
   CLIENT_BAD_REQUEST,
   CLIENT_FORBIDDEN,
   CLIENT_UNAUTHORIZED,
-  OPENAI_BASE,
   OPENAI_REQUEST_SIZE_LIMIT,
-} from "../constants";
-import { IMiddleware } from "../types";
-import { ErrorResponse } from "../utils/ErrorResponse";
-import { apiAuthFilter } from "./apiAuthFilter";
-import { jsonFilter } from "./jsonFilter";
-import { modelFilter } from "./modelFilter";
-import { rewriteUrl } from "./rewriteUrl";
+} from "../constants.ts";
+import type { Env, IMiddleware } from "../types.ts";
+import { ErrorResponse } from "../utils/ErrorResponse.ts";
+import { apiAuthFilter, AuthMode } from "./apiAuthFilter.ts";
+import { fetchOpenAI } from "./fetchOpenAI.ts";
+import { jsonFilter } from "./jsonFilter.ts";
+import { modelFilter } from "./modelFilter.ts";
 
-export const proxyRoute: IMiddleware = async (request, env) => {
-  // checking starts
-  const [apiAuth, apiAuthMsg] = apiAuthFilter(env, request);
+const passthroughStream = (request: Request, authHeader: string) =>
+  fetchOpenAI(request, authHeader, request.body);
 
-  if (!apiAuth) {
-    return ErrorResponse(apiAuthMsg, CLIENT_UNAUTHORIZED);
-  }
-
+const proxyStream = async (request: Request, env: Env, authHeader: string) => {
+  // check json
   const [isValid, text, json] = await jsonFilter<{}>(
     request,
     OPENAI_REQUEST_SIZE_LIMIT,
@@ -33,33 +29,26 @@ export const proxyRoute: IMiddleware = async (request, env) => {
     return ErrorResponse("Invalid json format", CLIENT_BAD_REQUEST);
   }
 
+  // check model
   const [isAllowed, modelMsg] = modelFilter(env, json);
 
   if (!isAllowed) {
     return ErrorResponse(modelMsg, CLIENT_FORBIDDEN);
   }
 
-  // checking ends
+  return fetchOpenAI(request, authHeader, text);
+};
 
-  // prepare request
-  const upstreamUrl = rewriteUrl(request, OPENAI_BASE);
+export const proxyRoute: IMiddleware = async (request, env) => {
+  const [authMode, authHeader] = apiAuthFilter(env, request);
 
-  const {
-    method,
-    headers,
-  } = request;
+  if (authMode === AuthMode.proxy) {
+    return proxyStream(request, env, authHeader);
+  }
 
-  const upstreamHeaders = new Headers(headers);
+  if (authMode === AuthMode.passthrough) {
+    return passthroughStream(request, authHeader);
+  }
 
-  upstreamHeaders.set("Authorization", apiAuth);
-
-  const req = new Request(upstreamUrl.href, {
-    method,
-    headers: upstreamHeaders,
-    body: text,
-  });
-
-  // prepare request ends
-
-  return fetch(req);
+  return ErrorResponse("Access denied", CLIENT_UNAUTHORIZED);
 };

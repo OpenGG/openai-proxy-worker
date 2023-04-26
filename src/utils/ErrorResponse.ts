@@ -6,5 +6,8 @@ export const ErrorResponse = (message: string, status: number) =>
     }),
     {
       status,
+      headers: {
+        'content-type': 'application/json'
+      }
     },
   );

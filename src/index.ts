@@ -1,8 +1,5 @@
-// NOTE: this import only required during beta. Types will be available
-// on @cloudflare/workers-types after launch
-
-import type { Env } from "./types";
-import { useRouter } from "./router/useRouter";
+import type { Env } from "./types.ts";
+import { useRouter } from "./router/useRouter.ts";
 
 const fetch: ExportedHandlerFetchHandler<Env> = (
   request,

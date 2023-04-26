@@ -1,5 +1,5 @@
-import type { Env } from "../types";
-import { getLazy } from "./getLazy";
+import type { Env } from "../types.ts";
+import { getLazy } from "./getLazy.ts";
 
 export const useEnvValue = (env: Env, key: keyof Env, defaults: string) => env[key] || defaults;
 

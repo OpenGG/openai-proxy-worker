@@ -1,6 +1,18 @@
-import { Env } from "../types";
-import { useEnvValue, useEnvValues } from "../utils/Env";
-import { getHeader } from "../utils/getHeader";
+import { Env } from "../types.ts";
+import { useEnvValue, useEnvValues } from "../utils/Env.ts";
+import { getHeader } from "../utils/getHeader.ts";
+
+enum IAuthMode {
+  proxy = 0,
+  passthrough = 1,
+  none = -1,
+}
+
+export const AuthMode: Record<string, IAuthMode> = {
+  proxy: 0,
+  passThrough: 1,
+  none: -1,
+}
 
 const fromKeyConfig = (env: Env, authHeader: string) => {
   const prefix = "KEY ";
@@ -23,7 +35,7 @@ const fromKeyConfig = (env: Env, authHeader: string) => {
   return `Bearer ${apiKey}`;
 };
 
-const passThrough = (authHeader: string) => {
+const passthrough = (authHeader: string) => {
   if (authHeader.startsWith("Bearer ")) {
     return authHeader;
   }
@@ -34,15 +46,19 @@ const passThrough = (authHeader: string) => {
 export const apiAuthFilter = (
   env: Env,
   request: Request,
-): [string, string] => {
+): [IAuthMode, string] => {
   const authHeader = getHeader(request, "Authorization") || "";
 
-  const apiAuth = fromKeyConfig(env, authHeader) || passThrough(authHeader);
-
-  if (!apiAuth) {
-    return [apiAuth, "Access denied"];
+  const apiAuth = fromKeyConfig(env, authHeader);
+  if (apiAuth) {
+    return [AuthMode.proxy, apiAuth];
   }
 
-  // valid
-  return [apiAuth, ""];
+  const passAuth = passthrough(authHeader);
+
+  if (passAuth) {
+    return [AuthMode.passthrough, passAuth];
+  }
+
+  return [AuthMode.none, ""];
 };
