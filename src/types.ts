@@ -1,4 +1,6 @@
 export interface Env {
+  OPENAI_BASE: string;
+
   ENV_OPENAI_ALLOWED_MODELS: string;
 
   SECRET_AUTH_KEYS: string;

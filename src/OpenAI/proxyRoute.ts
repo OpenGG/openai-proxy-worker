@@ -11,8 +11,8 @@ import { fetchOpenAI } from "./fetchOpenAI.ts";
 import { jsonFilter } from "./jsonFilter.ts";
 import { modelFilter } from "./modelFilter.ts";
 
-const passthroughStream = (request: Request, authHeader: string) =>
-  fetchOpenAI(request, authHeader, request.body);
+const passthroughStream = (request: Request, env: Env, authHeader: string) =>
+  fetchOpenAI(request, env, authHeader, request.body);
 
 const proxyStream = async (request: Request, env: Env, authHeader: string) => {
   // check json
@@ -36,7 +36,7 @@ const proxyStream = async (request: Request, env: Env, authHeader: string) => {
     return ErrorResponse(modelMsg, CLIENT_FORBIDDEN);
   }
 
-  return fetchOpenAI(request, authHeader, text);
+  return fetchOpenAI(request, env, authHeader, text);
 };
 
 export const proxyRoute: IMiddleware = async (request, env) => {
@@ -47,7 +47,7 @@ export const proxyRoute: IMiddleware = async (request, env) => {
   }
 
   if (authMode === AuthMode.passthrough) {
-    return passthroughStream(request, authHeader);
+    return passthroughStream(request, env, authHeader);
   }
 
   return ErrorResponse("Access denied", CLIENT_UNAUTHORIZED);

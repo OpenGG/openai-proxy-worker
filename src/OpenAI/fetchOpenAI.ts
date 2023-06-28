@@ -1,13 +1,17 @@
-import { OPENAI_BASE } from "../constants.ts";
 import { isMock, mockFetch } from "./mock.ts";
 import { rewriteUrl } from "./rewriteUrl.ts";
+import type { Env } from "../types.ts";
+import { useEnvValue } from "utils/Env.ts";
 
 export const fetchOpenAI = (
   request: Request,
+  env: Env,
   authorization: string,
   body: string | ReadableStream | null,
 ) => {
-  const upstreamUrlObject = rewriteUrl(request, OPENAI_BASE);
+  const base = useEnvValue(env, "OPENAI_BASE", "");
+
+  const upstreamUrlObject = rewriteUrl(request, base);
 
   const upstreamUrl = upstreamUrlObject.href
 
